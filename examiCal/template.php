@@ -54,6 +54,7 @@
                     <p>It should work with anyone using the latest version of Blackboard to manage their exams, but was developed for Manchester University!</p>
 
                     <p>If you notice any bugs or problems, please let me know! My contact details are on my <a href="http://www.pezcuckow.com" target="_blank">personal site</a>.</p>
+                    <p>You can also sent a <a href="https://github.com/Pezmc/Exam-to-iCal/pulls">pull request</a> or dig through the code on <a href="https://github.com/Pezmc/Exam-to-iCal">GitHub.com</a>.</p>
                     <p><i>Note this was written in 2011 and may be out of date, though I'll do my best to keep it working!</i></p>
                 </div>
             </div>
