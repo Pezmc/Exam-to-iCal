@@ -67,7 +67,19 @@ if(!empty($_POST)) {
   // For every row in the input
   foreach($rows as $row){
 
-    $data = explode("\t", $row);
+    // Should be tab separated
+    $data = array_filter(explode("\t", $row));
+    
+    // Sometimes empty columns sneak in...
+    $data = array_filter($data);
+    
+    // Reindex now some columns may have been deleted
+    $data = array_values($data);
+    
+    // MyManchester has a thing for trailing whitespace
+    foreach($data as &$field) {
+      $field = trim($field);
+    }
 
     // Simple file log for debugging
     @fwrite($fh, '['. date("Y-m-d H:i:s") . '] ' . $row. "\n");
