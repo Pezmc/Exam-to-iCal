@@ -57,32 +57,50 @@ if(!empty($_POST)) {
 
   // Basic log
   $fh = @fopen("simpleLog.txt", 'a');
+  
+  // Make life easier
+  $mapping = array(
+    'code', 'name', 'date', 'location', 'seat', 'start', 'end'
+  );
+  $mapping = array_flip($mapping);
 
   // For every row in the input
   foreach($rows as $row){
 
-    $data = explode("\t", $row);
+    // Should be tab separated
+    $data = array_filter(explode("\t", $row));
+    
+    // Sometimes empty columns sneak in...
+    $data = array_filter($data);
+    
+    // Reindex now some columns may have been deleted
+    $data = array_values($data);
+    
+    // MyManchester has a thing for trailing whitespace
+    foreach($data as &$field) {
+      $field = trim($field);
+    }
 
     // Simple file log for debugging
     @fwrite($fh, '['. date("Y-m-d H:i:s") . '] ' . $row. "\n");
 
     //Exam Code	Title	Date	Location	Seat	Start	Finish
-    if(empty($data)||empty($data[6])||strtolower($data[0])=="exam code") continue;
+    if(empty($data)||empty($data[6])||strtolower($data[$mapping['code']])=="exam code") continue;
 
-    $start = strtotime($data[2]." ".$data[5]);
-    $end = strtotime($data[2]." ".$data[6]);
+    $start = strtotime($data[$mapping['date']]." ".$data[$mapping['start']]);
+    $end = strtotime($data[$mapping['date']]." ".$data[$mapping['end']]);
 
     print("BEGIN:VEVENT\r\n");
     print("DTSTART:".date("Ymd", $start)."T".date("His", $start)."\r\n");
     print("DTEND:".date("Ymd", $end)."T".date("His", $end)."\r\n");
-    print("SUMMARY:".smartTruncate($data[1], 40)." (".$data[0].")\r\n");
-    print("DESCRIPTION:Title: ".$data[1]
-                        ."\\nCode: ".$data[0]
-                        ."\\nSeat: ".$data[4]
-                        ."\\nStart: ".$data[5]
-                        ."\\nEnd: ".$data[6]
+    print("SUMMARY:".smartTruncate($data[$mapping['name']], 40)." (".$data[$mapping['code']].")\r\n");
+    print("DESCRIPTION:Title: ".$data[$mapping['name']]
+                        ."\\nCode: ".$data[$mapping['code']]
+                        ."\\nSeat: ".$data[$mapping['seat']]
+                        ."\\nStart: ".$data[$mapping['start']]
+                        ."\\nEnd: ".$data[$mapping['end']]
                         ."\\n\\nRaw\\n". str_replace("\t", " - ", $row)."\r\n");
-    print("LOCATION:".$data[3]."\r\n");
+    print("LOCATION:".$data[$mapping['location']]."\r\n");
     print("END:VEVENT\r\n");
 
   }
