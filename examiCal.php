@@ -89,6 +89,15 @@ if(!empty($_POST)) {
 
     $start = strtotime($data[$mapping['date']]." ".$data[$mapping['start']]);
     $end = strtotime($data[$mapping['date']]." ".$data[$mapping['end']]);
+    
+    // List of buildings at Uom, all campuses as array.
+    $lines = file("buildings.txt", FILE_IGNORE_NEW_LINES);
+    // Loop through all building names, try to find one that matches
+    $fixedLocation=$data[$mapping['location']];
+    foreach ($lines as $value)
+    if (strpos($data[$mapping['location']], $value) !== FALSE) {
+      $fixedLocation=$value . ", University of Manchester";
+    }
 
     print("BEGIN:VEVENT\r\n");
     print("DTSTART:".date("Ymd", $start)."T".date("His", $start)."\r\n");
@@ -100,7 +109,7 @@ if(!empty($_POST)) {
                         ."\\nStart: ".$data[$mapping['start']]
                         ."\\nEnd: ".$data[$mapping['end']]
                         ."\\n\\nRaw\\n". str_replace("\t", " - ", $row)."\r\n");
-    print("LOCATION:".$data[$mapping['location']]."\r\n");
+    print("LOCATION:".$fixedLocation."\r\n");
     print("END:VEVENT\r\n");
 
   }
